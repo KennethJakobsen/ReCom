@@ -1,2 +1,2 @@
 # ReWork
-A Rective Networking library that makes the messaging through TCP easy
+A Reactive Networking library that makes the messaging through TCP easy
