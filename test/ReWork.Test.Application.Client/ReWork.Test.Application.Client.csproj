@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\ReWork\ReWork.csproj" />
+    <ProjectReference Include="..\ReWork.Test.Common.Domain\ReWork.Test.Common.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
