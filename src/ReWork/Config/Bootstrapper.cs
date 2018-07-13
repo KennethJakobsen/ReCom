@@ -29,6 +29,8 @@ namespace ReWork.Config
             _activator.Register<ICommandConverter, BsonConverter>();
             _activator.Register<IProtocol, ReWorkProtocol>();
             _activator.Register<IHandle<WelcomeMessage>, BuiltInWelcomeMessageHandler>();
+            _activator.Register<IHandle<CompleteHandshakeMessage>, BuiltInCompleteHandshakeHandler>();
+            _activator.Register<IHandle<InitiateHandshakeMessage>, BuiltInInitiateHandshakeHandler>();
             _activator.Register<IHandle<TimeoutMessage>, BuiltInTimeoutMessageHandler>();
             _activator.Register<IConnectionFactory, ConnectionFactory>(new ActivatorLifeTime());
             _activator.Register<IConnectionManager, ConnectionManager>(new ActivatorLifeTime());

@@ -2,16 +2,15 @@
 using System.Threading.Tasks;
 using ReWork.Connectivity;
 using ReWork.Handlers;
-using ReWork.SystemMessages;
+using ReWork.Test.Common.Domain;
 
 namespace ReWork.Test.Application.Client.Handlers
 {
-    public class WelcomeMessageHandler : ICommand<WelcomeMessage>
+    public class PingPongCommandHandler : ICommand<PingPongCommand>
     {
-        public Task Handle(WelcomeMessage command, Connection connection)
+        public Task Handle(PingPongCommand command, Connection connection)
         {
             Console.WriteLine(command.Message);
-            Console.WriteLine($"Your connection id is: {connection.ClientId}");
             return Task.CompletedTask;
         }
     }

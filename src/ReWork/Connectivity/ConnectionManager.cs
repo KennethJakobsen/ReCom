@@ -37,8 +37,6 @@ namespace ReWork.Connectivity
             try
             {
                 listener.Start();
-                //just fire and forget. We break from the "forgotten" async loops
-                //in AcceptClientsAsync using a CancellationToken from `cts`
                 await AcceptClientsAsync(listener, cts.Token);
             }
             finally
@@ -48,13 +46,17 @@ namespace ReWork.Connectivity
             }
         }
 
-        public Connection Connect(ReWorkClientRole role)
+        public async Task<Connection> Connect(ReWorkClientRole role)
         {
             var cts = new CancellationTokenSource();
             var client = new TcpClient(role.Host, role.Port);
             var connection = _factory.Create(client, Guid.Empty);
 
+            //once again, just fire and forget, and use the CancellationToken
+            //to signal to the "forgotten" async invocation.
+            
             ProcessCommandsAsync(connection, cts.Token);
+            await connection.Send(new InitiateHandshakeMessage());
             return connection;
         }
 
@@ -72,8 +74,6 @@ namespace ReWork.Connectivity
                 var connection = _factory.Create(client, Guid.NewGuid());
                 _connections.Add(connection.ClientId, connection);
 
-                connection.Send(new WelcomeMessage("Welcome to the server", connection.ClientId));
-
                 //once again, just fire and forget, and use the CancellationToken
                 //to signal to the "forgotten" async invocation.
                 ProcessCommandsAsync(connection, ct);
@@ -83,20 +83,9 @@ namespace ReWork.Connectivity
 
         private async Task ProcessCommandsAsync(Connection connection, CancellationToken ct)
         {
-            //TODO: Implement client connected event
             using (connection)
-            {
-
-                //TODO investigate
-                //if (amountRead == 0) break; //end of stream.
-
                 while (!ct.IsCancellationRequested)
                 {
-                    //under some circumstances, it's not possible to detect
-                    //a client disconnecting if there's no data being sent
-                    //so it's a good idea to give them a timeout to ensure that 
-                    //we clean them up.
-
                     try
                     {
                         var timeoutTask = Task.Delay(TimeSpan.FromSeconds(15), ct);
@@ -123,11 +112,6 @@ namespace ReWork.Connectivity
                         break;
                     }
                 }
-            }
         }
-
-       
-       
-
     }
 }

@@ -18,7 +18,7 @@ namespace ReWork.Config
 
         public Connection Start(ReWorkClientRole role)
         {
-            return _connectionManager.Connect(role);
+            return _connectionManager.Connect(role).ConfigureAwait(false).GetAwaiter().GetResult();
         }
     }
 }

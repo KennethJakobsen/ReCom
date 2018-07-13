@@ -25,7 +25,7 @@ namespace ReWork.Test.Application.Client
                 
                 var activator = new DefaultActivator();
                 activator.Register<ICommand<PingPongCommand>, PingPongCommandHandler>();
-                activator.Register<ICommand<WelcomeMessage>, WelcomeMessageHandler>();
+                activator.Register<ICommand<CompleteHandshakeMessage>, CompleteHandshakeMessageHandler>();
                 var connection = Configure
                     .With(activator)
                     .Start(new ReWorkClientRole("127.0.0.1", 13000));

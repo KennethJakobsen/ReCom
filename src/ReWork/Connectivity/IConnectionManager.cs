@@ -6,6 +6,6 @@ namespace ReWork.Connectivity
     public interface IConnectionManager
     {
         Task StartListening(ReWorkServerRole role);
-        Connection Connect(ReWorkClientRole role);
+        Task<Connection> Connect(ReWorkClientRole role);
     }
 }

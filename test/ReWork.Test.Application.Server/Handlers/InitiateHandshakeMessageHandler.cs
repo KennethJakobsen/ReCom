@@ -6,11 +6,11 @@ using ReWork.SystemMessages;
 
 namespace ReWork.Test.Application.Server.Handlers
 {
-    public class WelcomeMessageHandler : ICommand<WelcomeMessage>
+    public class InitiateHandshakeMessageHandler : ICommand<InitiateHandshakeMessage>
     {
-        public Task Handle(WelcomeMessage command, Connection connection)
+        public Task Handle(InitiateHandshakeMessage command, Connection connection)
         {
-            Console.WriteLine(command.Message);
+            Console.WriteLine("Client connected: " + connection.ClientId);
             return Task.CompletedTask;
         }
     }

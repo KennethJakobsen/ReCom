@@ -15,7 +15,7 @@ namespace ReWork.Test.Application.Server
         {
             var activator = new DefaultActivator();
             activator.Register<ICommand<PingPongCommand>, PingPongCommandHandler>();
-            activator.Register<ICommand<WelcomeMessage>, WelcomeMessageHandler>();
+            activator.Register<ICommand<InitiateHandshakeMessage>, InitiateHandshakeMessageHandler>();
             Configure.With(activator).Start(new ReWorkServerRole(IPAddress.Any, 13000));
         }
     }
