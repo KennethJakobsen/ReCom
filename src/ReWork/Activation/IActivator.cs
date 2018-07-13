@@ -10,7 +10,7 @@ namespace ReWork.Activation
         object GetInstance(Type t, HashSet<Type> registered);
         T GetInstance<T>();
         void Register(object instance);
-        void Register<T>(Func<object> factory, bool keepAlive);
+        void Register<T>(Func<object> factory, ILifeTime lifetime);
         void Register<T>(object instance);
         void Register<T>();
         void Register<T>(ILifeTime lifeTime);

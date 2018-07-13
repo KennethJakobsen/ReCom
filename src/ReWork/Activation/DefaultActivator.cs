@@ -7,41 +7,39 @@ namespace ReWork.Activation
 {
     public class DefaultActivator : IDisposable, IActivator
     {
-        private Dictionary<Type, object> _instances = new Dictionary<Type, object>();
-        private Dictionary<Type, ServiceRegistration> _nonInstatiated = new Dictionary<Type, ServiceRegistration>();
-        private Dictionary<Type, ServiceFactory> _factories = new Dictionary<Type, ServiceFactory>();
+        private Dictionary<Type, ServiceRegistration> _registrations = new Dictionary<Type, ServiceRegistration>();
 
         public void Register<TInterface, TInstance>() where TInstance : TInterface
         {
-            _nonInstatiated.Add(typeof(TInterface), new ServiceRegistration(typeof(TInstance), new TransientLifeTime()));
+            _registrations.Add(typeof(TInterface), new ServiceRegistration(typeof(TInstance), new TransientLifeTime()));
         }
         public void Register<TInterface, TInstance>(ILifeTime lifetime) where TInstance : TInterface
         {
-            _nonInstatiated.Add(typeof(TInterface), new ServiceRegistration(typeof(TInstance), lifetime));
+            _registrations.Add(typeof(TInterface), new ServiceRegistration(typeof(TInstance), lifetime));
         }
 
         public void Register<T>()
         {
-            _nonInstatiated.Add(typeof(T), new ServiceRegistration(typeof(T), new TransientLifeTime()));
+            _registrations.Add(typeof(T), new ServiceRegistration(typeof(T), new TransientLifeTime()));
         }
         public void Register<T>(ILifeTime lifeTime)
         {
-            _nonInstatiated.Add(typeof(T), new ServiceRegistration(typeof(T), lifeTime));
+            _registrations.Add(typeof(T), new ServiceRegistration(typeof(T), lifeTime));
         }
 
         public void Register<T>(object instance)
         {
-            _instances.Add(typeof(T), instance);
+            _registrations.Add(typeof(T), new ServiceRegistration(instance));
         }
 
         public void Register(object instance)
         {
-            _instances.Add(instance.GetType(), instance);
+            _registrations.Add(instance.GetType(), new ServiceRegistration(instance));
         }
 
-        public void Register<T>(Func<object> factory, bool keepAlive)
+        public void Register<T>(Func<object> factory, ILifeTime lifetime)
         {
-            _factories.Add(typeof(T), new ServiceFactory(keepAlive, factory));
+            _registrations.Add(typeof(T), new ServiceRegistration( factory, lifetime));
         }
 
         public T GetInstance<T>()
@@ -53,34 +51,22 @@ namespace ReWork.Activation
             return GetInstance(t, new HashSet<Type>());
         }
 
-        private object InvokeFactory(Type t)
-        {
-            var serviceFactory = _factories[t];
-            var instance = serviceFactory.Create();
-
-            if (!serviceFactory.KeepAlive)
-                return instance;
-
-            _instances.Add(t, instance);
-            return instance;
-        }
-
         public bool HasRegistration(Type t)
         {
-            return _instances.ContainsKey(t) || _factories.ContainsKey(t) ||
-                   _nonInstatiated.ContainsKey(t);
+            return _registrations.ContainsKey(t);
         }
         public object GetInstance(Type t, HashSet<Type> registered)
         {
-            if (_instances.ContainsKey(t)) return _instances[t];
-            if (_factories.ContainsKey(t)) return InvokeFactory(t);
-            if (_nonInstatiated.ContainsKey(t))
-            {
-                var instance = Instantiate(_nonInstatiated[t], registered);
-                SaveInstance(t, instance, _nonInstatiated[t].LifeTime);
-                return instance;
-            }
-            throw new ActivatorServiceNotFoundException($"Type: {t} was not found in activator");
+
+            if (!_registrations.ContainsKey(t))
+                throw new ActivatorServiceNotFoundException($"Type: {t} was not found in activator");
+
+            var reg = _registrations[t];
+            if (reg.HasInstance) return reg.Instance;
+            var instance = reg.HasFactory ? reg.Factory() : Instantiate(reg, registered);
+
+            SaveInstance(t, instance);
+            return instance;
         }
 
         private object Instantiate(ServiceRegistration reg, HashSet<Type> registered)
@@ -110,16 +96,15 @@ namespace ReWork.Activation
             return firstCtor.Invoke(instances);
         }
 
-        private void SaveInstance(Type id, object instance, ILifeTime lifeTime)
+        private void SaveInstance(Type id, object instance)
         {
-            if (lifeTime is ActivatorLifeTime)
-                _instances.Add(id, instance);
+            var reg = _registrations[id];
+            if (reg.LifeTime is ActivatorLifeTime)
+                reg.Instance = instance;
         }
         public void Dispose()
         {
-            _instances = null;
-            _nonInstatiated = null;
-            _factories = null;
+            _registrations = null;
         }
     }
 }

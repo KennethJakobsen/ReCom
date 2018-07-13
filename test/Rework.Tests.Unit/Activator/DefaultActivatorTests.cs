@@ -133,7 +133,7 @@ namespace Rework.Tests.Unit.Activator
         [TestMethod]
         public void CanResolveFactory()
         {
-            _sut.Register<Interface1>(() => new Test1(), false);
+            _sut.Register<Interface1>(() => new Test1(), new TransientLifeTime());
 
             var result = _sut.GetInstance<Interface1>();
             result.ShouldNotBeNull();
@@ -143,7 +143,7 @@ namespace Rework.Tests.Unit.Activator
         [TestMethod]
         public void CanKeepFactoryInstanceAlive()
         {
-            _sut.Register<Interface1>(() => new Test1(), true);
+            _sut.Register<Interface1>(() => new Test1(), new ActivatorLifeTime());
 
             var result1 = _sut.GetInstance<Interface1>();
             var result2 = _sut.GetInstance<Interface1>();
