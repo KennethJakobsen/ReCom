@@ -1,12 +1,13 @@
 ﻿using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
+using ReWork.SystemMessages.Transport;
 
 namespace ReWork.Bson
 {
     internal class BsonConverter : ICommandConverter
     {
-        public  object Deserialize(byte[] data)
+        public  TransportMessage Deserialize(byte[] data)
         {
             if (data == null) return null;
 
@@ -15,8 +16,7 @@ namespace ReWork.Bson
             {
                 var serializer = new JsonSerializer {TypeNameHandling = TypeNameHandling.All};
 
-                var obj = serializer.Deserialize<object>(reader);
-                return obj;
+                return serializer.Deserialize<TransportMessage>(reader);
             }
         }
 

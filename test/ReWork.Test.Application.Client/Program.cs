@@ -26,13 +26,14 @@ namespace ReWork.Test.Application.Client
                 var activator = new DefaultActivator();
                 activator.Register<ICommand<PingPongCommand>, PingPongCommandHandler>();
                 activator.Register<ICommand<CompleteHandshakeMessage>, CompleteHandshakeMessageHandler>();
+                activator.Register<ICommand<ReceivedMessage>, MessageReceivedCommandHandler>();
                 var connection = Configure
                     .With(activator)
                     .Start(new ReWorkClientRole("127.0.0.1", 13000));
 
                 while (true)
                 {
-                    connection.Send(new PingPongCommand() { Message = "Ping!" }).Wait();
+                    connection.Send(new PingPongCommand() { Message = "Ping!" }, true).Wait();
                     Thread.Sleep(1000);
                 }
                 

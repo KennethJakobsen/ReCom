@@ -1,8 +1,10 @@
-﻿namespace ReWork.Bson
+﻿using ReWork.SystemMessages.Transport;
+
+namespace ReWork.Bson
 {
     public interface ICommandConverter
     {
-        object Deserialize(byte[] data);
+        TransportMessage Deserialize(byte[] data);
         byte[] Serialize(object obj);
     }
 }

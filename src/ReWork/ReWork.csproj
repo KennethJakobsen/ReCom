@@ -8,8 +8,4 @@
     <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Connectivity\Delivery\" />
-  </ItemGroup>
-
 </Project>
