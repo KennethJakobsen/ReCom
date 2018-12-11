@@ -76,27 +76,28 @@ namespace ReWork.Connectivity
             {
                 try
                 {
-                    var timeoutTask = Task.Delay(TimeSpan.FromSeconds(15), ct);
+                    var timeoutTask = Task.Delay(TimeSpan.FromHours(2), ct);
                     var readTask = _protocol.ReadCommandFromStream(Stream, ct);
                     var completedTask = await Task.WhenAny(timeoutTask, readTask)
                         .ConfigureAwait(false);
+                    TransportMessage command;
                     if (completedTask == timeoutTask)
                     {
-                        await Send(new TimeoutMessage("Connection timed out"));
+                        command = new TransportMessage() { Payload = new TimeoutMessage("Connection timed out")};
                         break;
                     }
 
                     //now we know that the amountTask is complete so
                     //we can ask for its Result without blocking
                     var commandBytes = readTask.Result;
-                    var command = _commandConverter.Deserialize(commandBytes);
-
-                    await SendReceiveConfirmation(command);
+                    command = _commandConverter.Deserialize(commandBytes);
 
                     if (command != null)
+                    {
+                        await SendReceiveConfirmation(command);
                         await _dispatcher.Execute(command.Payload, this);
-
-                    await SendHandledConfirmation(command);
+                        await SendHandledConfirmation(command);
+                    }
 
                     Thread.Sleep(5);
                 }
