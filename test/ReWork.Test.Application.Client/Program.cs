@@ -34,7 +34,7 @@ namespace ReWork.Test.Application.Client
                 while (true)
                 {
                     connection.Send(new PingPongCommand() { Message = "Ping!" }, true).Wait();
-                    Thread.Sleep(1000);
+                    Console.ReadLine();
                 }
                 
 
