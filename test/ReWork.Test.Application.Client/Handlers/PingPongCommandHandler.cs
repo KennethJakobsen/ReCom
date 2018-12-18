@@ -10,7 +10,7 @@ namespace ReWork.Test.Application.Client.Handlers
     {
         public Task Handle(PingPongCommand command, Connection connection)
         {
-            Console.WriteLine(command.Message);
+            Console.WriteLine("Server says: " + command.Message);
             return Task.CompletedTask;
         }
     }

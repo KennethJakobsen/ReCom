@@ -11,7 +11,7 @@ namespace ReWork.SystemMessages.Transport
         public object Payload { get; set; }
         public bool RequiresReceivedFeedback { get; set; }
         public bool RequiresHandledFeedback { get; set; }
-        public Guid MessageId { get; }
+        public Guid MessageId { get; set; }
 
     }
 }

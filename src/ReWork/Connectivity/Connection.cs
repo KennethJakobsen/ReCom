@@ -21,8 +21,9 @@ namespace ReWork.Connectivity
         private readonly ICommandConverter _commandConverter;
         private readonly IHandlerDispatcher _dispatcher;
         private readonly Dictionary<Guid, DeliveryKeeper> _devliverables = new Dictionary<Guid, DeliveryKeeper>();
+        private Action<string> _onTerminating;
 
-        internal Connection(TcpClient client, Guid clientId, IProtocol protocol, ICommandConverter commandConverter, IHandlerDispatcher dispatcher)
+        internal Connection(TcpClient client, string clientId, IProtocol protocol, ICommandConverter commandConverter, IHandlerDispatcher dispatcher, Action<string> onTerminating)
         {
             _client = client;
             _protocol = protocol;
@@ -30,9 +31,10 @@ namespace ReWork.Connectivity
             _dispatcher = dispatcher;
             ClientId = clientId;
             Stream = _client.GetStream();
+            _onTerminating = onTerminating;
         }
 
-        public Guid ClientId { get; private set; }
+        public string ClientId { get; private set; }
         internal NetworkStream Stream { get; }
 
         public async Task Send(object command, bool requireFeedback = false, bool requireHandled = false)
@@ -42,7 +44,6 @@ namespace ReWork.Connectivity
             {
                 var transport = new TransportMessage()
                 {
-                    MessageId = Guid.NewGuid(),
                     Payload = command,
                     RequiresHandledFeedback = requireHandled,
                     RequiresReceivedFeedback = requireFeedback
@@ -61,7 +62,7 @@ namespace ReWork.Connectivity
 
         }
 
-        internal void UpdateId(Guid id)
+        internal void UpdateId(string id)
         {
             ClientId = id;
         }
@@ -106,6 +107,15 @@ namespace ReWork.Connectivity
                     break;
                 }
             }
+            Dispose();
+        }
+
+
+        public async Task Terminate(string reason = null)
+        {
+            await Send(new ConnectionTerminatingMessage(reason));
+            _client.Close();
+            _onTerminating(ClientId);
             Dispose();
         }
 

@@ -11,7 +11,7 @@ namespace ReWork.Test.Application.Server.Handlers
 
         public async Task Handle(PingPongCommand command, Connection connection)
         {
-            Console.WriteLine(command.Message);
+            Console.WriteLine($"client with id {connection.ClientId} says: {command.Message}");
             await connection.Send(new PingPongCommand() {Message = "Pong!"});
         }
     }

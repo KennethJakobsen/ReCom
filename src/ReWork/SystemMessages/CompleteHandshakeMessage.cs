@@ -4,11 +4,11 @@ namespace ReWork.SystemMessages
 {
     public class CompleteHandshakeMessage : IReWorkSystemMessage
     {
-        public CompleteHandshakeMessage(Guid connectionId)
+        public CompleteHandshakeMessage(string connectionId)
         {
             ConnectionId = connectionId;
         }
 
-        public Guid ConnectionId { get;  }
+        public string ConnectionId { get;  }
     }
 }

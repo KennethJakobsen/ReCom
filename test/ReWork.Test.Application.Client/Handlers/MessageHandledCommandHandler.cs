@@ -8,11 +8,11 @@ using ReWork.SystemMessages;
 
 namespace ReWork.Test.Application.Client.Handlers
 {
-    public class MessageReceivedCommandHandler : ICommand<ReceivedMessage>
+    public class MessageHandledCommandHandler : ICommand<HandledMessage>
     {
-        public Task Handle(ReceivedMessage command, Connection connection)
+        public Task Handle(HandledMessage command, Connection connection)
         {
-            Console.WriteLine($"Server has received: {command.ReceivedMessageId}");
+            Console.WriteLine($"Server has handled: {command.HandledMessageId}");
             return Task.CompletedTask;
         }
     }

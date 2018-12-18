@@ -16,18 +16,12 @@ namespace ReWork.Connectivity
 {
     internal class ConnectionManager : IConnectionManager
     {
-        private readonly Dictionary<Guid, Connection> _connections = new Dictionary<Guid, Connection>();
+        private readonly Dictionary<string, Connection> _connections = new Dictionary<string, Connection>();
         private readonly IConnectionFactory _factory;
-        private readonly IHandlerDispatcher _dispatcher;
-        private readonly IProtocol _protocol;
-        private readonly ICommandConverter _commandConverter;
 
-        public ConnectionManager(IConnectionFactory factory, IHandlerDispatcher dispatcher, IProtocol protocol, ICommandConverter commandConverter)
+        public ConnectionManager(IConnectionFactory factory)
         {
             _factory = factory;
-            _dispatcher = dispatcher;
-            _protocol = protocol;
-            _commandConverter = commandConverter;
         }
         public async Task StartListening(ReWorkServerRole role)
         {
@@ -50,7 +44,7 @@ namespace ReWork.Connectivity
             {
                 var client = await listener.AcceptTcpClientAsync()
                     .ConfigureAwait(false);
-                var connection = _factory.Create(client, Guid.NewGuid());
+                var connection = _factory.Create(client, Guid.NewGuid().ToString(), TerminateConnectionCallback);
                 _connections.Add(connection.ClientId, connection);
 
                 //once again, just fire and forget, and use the CancellationToken
@@ -63,7 +57,7 @@ namespace ReWork.Connectivity
         {
             var cts = new CancellationTokenSource();
             var client = new TcpClient(role.Host, role.Port);
-            var connection = _factory.Create(client, Guid.Empty);
+            var connection = _factory.Create(client, Guid.Empty.ToString(), TerminateConnectionCallback);
 
             //once again, just fire and forget, and use the CancellationToken
             //to signal to the "forgotten" async invocation.
@@ -73,7 +67,12 @@ namespace ReWork.Connectivity
             return connection;
         }
 
-        public IEnumerable<Connection> GetConnections(IEnumerable<Guid> ids)
+        private void TerminateConnectionCallback(string id)
+        {
+            _connections.Remove(id);
+        }
+
+        public IEnumerable<Connection> GetConnections(IEnumerable<string> ids)
         {
             return ids.Where(_connections.ContainsKey).Select(x => _connections[x]);
         }
