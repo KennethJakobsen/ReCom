@@ -57,7 +57,6 @@ namespace ReWork.Activation
         }
         public object GetInstance(Type t, HashSet<Type> registered)
         {
-
             if (!_registrations.ContainsKey(t))
                 throw new ActivatorServiceNotFoundException($"Type: {t} was not found in activator");
 

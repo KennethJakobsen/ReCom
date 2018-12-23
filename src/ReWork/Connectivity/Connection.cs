@@ -21,9 +21,9 @@ namespace ReWork.Connectivity
         private readonly ICommandConverter _commandConverter;
         private readonly IHandlerDispatcher _dispatcher;
         private readonly Dictionary<Guid, DeliveryKeeper> _devliverables = new Dictionary<Guid, DeliveryKeeper>();
-        private Action<string> _onTerminating;
+        private readonly INotifyTermination _connectionTerminator;
 
-        internal Connection(TcpClient client, string clientId, IProtocol protocol, ICommandConverter commandConverter, IHandlerDispatcher dispatcher, Action<string> onTerminating)
+        internal Connection(TcpClient client, string clientId, IProtocol protocol, ICommandConverter commandConverter, IHandlerDispatcher dispatcher, INotifyTermination connectionTerminator)
         {
             _client = client;
             _protocol = protocol;
@@ -31,11 +31,23 @@ namespace ReWork.Connectivity
             _dispatcher = dispatcher;
             ClientId = clientId;
             Stream = _client.GetStream();
-            _onTerminating = onTerminating;
+            _connectionTerminator = connectionTerminator;
+            AuthorizedForReceive = false;
         }
 
         public string ClientId { get; private set; }
+        public bool AuthorizedForReceive { get; protected set; }
         internal NetworkStream Stream { get; }
+
+        public virtual void Authorize()
+        {
+            AuthorizedForReceive = true;
+        }
+
+        public virtual void DenyAuthorization()
+        {
+            AuthorizedForReceive = false;
+        }
 
         public async Task Send(object command, bool requireFeedback = false, bool requireHandled = false)
         {
@@ -95,6 +107,12 @@ namespace ReWork.Connectivity
 
                     if (command != null)
                     {
+                        if (!AuthorizedForReceive && !(command.Payload is InitiateHandshakeMessage))
+                        {
+                            await Send(new NotAuthorizedMessage("You are not authorized to send messages"));
+                            continue;
+                        }
+
                         await SendReceiveConfirmation(command);
                         await _dispatcher.Execute(command.Payload, this);
                         await SendHandledConfirmation(command);
@@ -115,7 +133,7 @@ namespace ReWork.Connectivity
         {
             await Send(new ConnectionTerminatingMessage(reason));
             _client.Close();
-            _onTerminating(ClientId);
+            _connectionTerminator.Terminate(ClientId);
             Dispose();
         }
 
@@ -150,5 +168,10 @@ namespace ReWork.Connectivity
         }
 
 
+    }
+
+    public interface INotifyTermination
+    {
+        void Terminate(string connectionName);
     }
 }

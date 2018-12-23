@@ -5,6 +5,6 @@ namespace ReWork.Connectivity
 {
     public interface IConnectionFactory
     {
-        Connection Create(TcpClient client, string clientId, Action<string> onTemrinating);
+        Connection Create(TcpClient client, string clientId, INotifyTermination terminator);
     }
 }

@@ -18,9 +18,9 @@ namespace ReWork.Connectivity
             _commandConverter = commandConverter;
             _dispatcher = dispatcher;
         }
-        public Connection Create(TcpClient client, string clientId, Action<string> onTerminating)
+        public Connection Create(TcpClient client, string clientId, INotifyTermination terminator)
         {
-            return new Connection(client, clientId, _protocol, _commandConverter, _dispatcher, onTerminating);
+            return new Connection(client, clientId, _protocol, _commandConverter, _dispatcher, terminator);
         }
     }
 }

@@ -10,5 +10,6 @@
 
         public string Host { get; }
         public int Port { get; }
+        public string Id { get; set; }
     }
 }

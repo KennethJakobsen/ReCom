@@ -14,7 +14,7 @@ using ReWork.SystemMessages;
 
 namespace ReWork.Connectivity
 {
-    internal class ConnectionManager : IConnectionManager
+    internal class ConnectionManager : IConnectionManager, INotifyTermination
     {
         private readonly Dictionary<string, Connection> _connections = new Dictionary<string, Connection>();
         private readonly IConnectionFactory _factory;
@@ -44,7 +44,7 @@ namespace ReWork.Connectivity
             {
                 var client = await listener.AcceptTcpClientAsync()
                     .ConfigureAwait(false);
-                var connection = _factory.Create(client, Guid.NewGuid().ToString(), TerminateConnectionCallback);
+                var connection = _factory.Create(client, Guid.NewGuid().ToString(), this);
                 _connections.Add(connection.ClientId, connection);
 
                 //once again, just fire and forget, and use the CancellationToken
@@ -57,19 +57,14 @@ namespace ReWork.Connectivity
         {
             var cts = new CancellationTokenSource();
             var client = new TcpClient(role.Host, role.Port);
-            var connection = _factory.Create(client, Guid.Empty.ToString(), TerminateConnectionCallback);
+            var connection = _factory.Create(client, Guid.Empty.ToString(), this);
 
             //once again, just fire and forget, and use the CancellationToken
             //to signal to the "forgotten" async invocation.
-            
+            connection.Authorize();
             connection.ProcessCommandsAsync(cts.Token);
             await connection.Send(new InitiateHandshakeMessage());
             return connection;
-        }
-
-        private void TerminateConnectionCallback(string id)
-        {
-            _connections.Remove(id);
         }
 
         public IEnumerable<Connection> GetConnections(IEnumerable<string> ids)
@@ -77,8 +72,9 @@ namespace ReWork.Connectivity
             return ids.Where(_connections.ContainsKey).Select(x => _connections[x]);
         }
 
-       
-
-       
+        public void Terminate(string connectionName)
+        {
+            _connections.Remove(connectionName);
+        }
     }
 }
