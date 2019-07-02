@@ -35,6 +35,10 @@ namespace ReWork.Connectivity
             AuthorizedForReceive = false;
         }
 
+        ~Connection()
+        {
+            Dispose();
+        }
         public string ClientId { get; private set; }
         public bool AuthorizedForReceive { get; protected set; }
         internal NetworkStream Stream { get; }
@@ -54,7 +58,7 @@ namespace ReWork.Connectivity
             
             try
             {
-                var transport = new TransportMessage()
+                var transport = new CommandTransportMessage()
                 {
                     Payload = command,
                     RequiresHandledFeedback = requireHandled,
@@ -74,9 +78,32 @@ namespace ReWork.Connectivity
 
         }
 
+        public async Task Request(object command)
+        {
+            try
+            {
+                var transport = new CommandTransportMessage()
+                {
+                    Payload = command,
+                    
+                };
+
+                var commandBytes = _commandConverter.Serialize(transport);
+                await _protocol.WriteCommandToStream(commandBytes, Stream);
+            }
+            catch (IOException)
+            {
+                Dispose();
+            }
+        }
+
+        public bool IsConnected()
+        {
+            return _client.Connected; //Client.Poll(100, SelectMode.SelectRead);
+        }
         internal void UpdateId(string id)
         {
-            ClientId = id;
+           ClientId = id;
         }
         public void Dispose()
         {
@@ -93,10 +120,10 @@ namespace ReWork.Connectivity
                     var readTask = _protocol.ReadCommandFromStream(Stream, ct);
                     var completedTask = await Task.WhenAny(timeoutTask, readTask)
                         .ConfigureAwait(false);
-                    TransportMessage command;
+                    ITransportMessages command;
                     if (completedTask == timeoutTask)
                     {
-                        command = new TransportMessage() { Payload = new TimeoutMessage("Connection timed out")};
+                        command = new CommandTransportMessage() { Payload = new TimeoutMessage("Connection timed out")};
                         break;
                     }
 
@@ -155,15 +182,21 @@ namespace ReWork.Connectivity
             return obj;
         }
 
-        private async Task SendReceiveConfirmation(TransportMessage transport)
+        private async Task SendReceiveConfirmation(ITransportMessages transport)
         {
-            if (transport.RequiresReceivedFeedback)
+            if (!(transport is CommandTransportMessage msgTransport))
+                throw new InvalidCastException();
+
+            if (msgTransport.RequiresReceivedFeedback)
                 await Send(new ReceivedMessage() {ReceivedMessageId = transport.MessageId});
         }
 
-        private async Task SendHandledConfirmation(TransportMessage transport)
+        private async Task SendHandledConfirmation(ITransportMessages transport)
         {
-            if (transport.RequiresHandledFeedback)
+            if (!(transport is CommandTransportMessage msgTransport))
+                throw new InvalidCastException();
+
+            if (msgTransport.RequiresHandledFeedback)
                 await Send(new HandledMessage() { HandledMessageId = transport.MessageId });
         }
 

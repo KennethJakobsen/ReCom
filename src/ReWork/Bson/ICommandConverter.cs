@@ -2,9 +2,9 @@
 
 namespace ReWork.Bson
 {
-    public interface ICommandConverter
+    internal interface ICommandConverter
     {
-        TransportMessage Deserialize(byte[] data);
+        ITransportMessages Deserialize(byte[] data);
         byte[] Serialize(object obj);
     }
 }

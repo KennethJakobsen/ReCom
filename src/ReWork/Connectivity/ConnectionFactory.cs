@@ -6,7 +6,7 @@ using ReWork.Protocol;
 
 namespace ReWork.Connectivity
 {
-    public class ConnectionFactory : IConnectionFactory
+    internal class ConnectionFactory : IConnectionFactory
     {
         private readonly IProtocol _protocol;
         private readonly ICommandConverter _commandConverter;

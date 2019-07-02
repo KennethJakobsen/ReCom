@@ -34,6 +34,8 @@ namespace ReWork.Handlers
             var method = type.GetMethod("Handle");
             if (method != null)
                 await (Task) method.Invoke(instance, new[] {command, connection});
+
+            
         }
     }
 }

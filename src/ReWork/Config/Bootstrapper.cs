@@ -25,6 +25,7 @@ namespace ReWork.Config
 
         public IActivator RegisterServices()
         {
+            _activator.Register<IHandle<DisconnectMessage>, BuiltInDisconnectMessageHandler>();
             _activator.Register<IHandlerDispatcher, HandlerDispatcher>();
             _activator.Register<ICommandConverter, BsonConverter>();
             _activator.Register<IProtocol, ReWorkProtocol>();

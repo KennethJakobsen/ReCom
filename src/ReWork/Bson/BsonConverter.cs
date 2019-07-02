@@ -7,7 +7,7 @@ namespace ReWork.Bson
 {
     internal class BsonConverter : ICommandConverter
     {
-        public  TransportMessage Deserialize(byte[] data)
+        public  ITransportMessages Deserialize(byte[] data)
         {
             if (data == null) return null;
 
@@ -16,7 +16,7 @@ namespace ReWork.Bson
             {
                 var serializer = new JsonSerializer {TypeNameHandling = TypeNameHandling.All};
 
-                return serializer.Deserialize<TransportMessage>(reader);
+                return serializer.Deserialize<ITransportMessages>(reader);
             }
         }
 

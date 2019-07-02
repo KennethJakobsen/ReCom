@@ -1,16 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace ReWork.SystemMessages.Transport
 {
-    public class TransportMessage
+    public class RequestTransportMessage : ITransportMessages
     {
-        public TransportMessage()
+        public RequestTransportMessage()
         {
             MessageId = Guid.NewGuid();
         }
         public object Payload { get; set; }
-        public bool RequiresReceivedFeedback { get; set; }
-        public bool RequiresHandledFeedback { get; set; }
         public Guid MessageId { get; set; }
 
     }
