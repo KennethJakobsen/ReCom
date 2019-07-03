@@ -1,26 +1,18 @@
-﻿using System;
-using System.Net.Sockets;
-using ReWork.Bson;
-using ReWork.Handlers;
-using ReWork.Protocol;
+﻿using ReWork.Handlers;
 
 namespace ReWork.Connectivity
 {
     internal class ConnectionFactory : IConnectionFactory
     {
-        private readonly IProtocol _protocol;
-        private readonly ICommandConverter _commandConverter;
         private readonly IHandlerDispatcher _dispatcher;
 
-        public ConnectionFactory(IProtocol protocol, ICommandConverter commandConverter, IHandlerDispatcher dispatcher)
+        public ConnectionFactory(  IHandlerDispatcher dispatcher)
         {
-            _protocol = protocol;
-            _commandConverter = commandConverter;
             _dispatcher = dispatcher;
         }
-        public Connection Create(TcpClient client, string clientId, INotifyTermination terminator)
+        public Connection Create( string clientId, ITransportConnection connection, INotifyTermination terminator)
         {
-            return new Connection(client, clientId, _protocol, _commandConverter, _dispatcher, terminator);
+            return new Connection(clientId, connection, _dispatcher, terminator);
         }
     }
 }

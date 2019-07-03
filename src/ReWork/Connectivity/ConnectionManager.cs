@@ -2,13 +2,10 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using ReWork.Bson;
 using ReWork.Config.Roles;
 using ReWork.Handlers;
-using ReWork.Protocol;
 using ReWork.SystemMessages;
 
 #pragma warning disable 4014
@@ -20,36 +17,36 @@ namespace ReWork.Connectivity
         private readonly ConcurrentDictionary<string, Connection> _connections = new ConcurrentDictionary<string, Connection>();
         private readonly IConnectionFactory _factory;
         private readonly IHandlerDispatcher _dispatcher;
+        private readonly ITransportManager _transportManager;
 
-        public ConnectionManager(IConnectionFactory factory, IHandlerDispatcher dispatcher)
+        public ConnectionManager(IConnectionFactory factory, IHandlerDispatcher dispatcher, ITransportManager transportManager)
         {
             _factory = factory;
             _dispatcher = dispatcher;
-            
+            _transportManager = transportManager;
         }
         public async Task StartListening(ReWorkServerRole role)
         {
             var cts = new CancellationTokenSource();
-            var listener = new TcpListener(role.IpAddress, role.Port);
             try
             {
-                listener.Start();
-                await AcceptClientsAsync(listener, cts.Token);
+                await _transportManager.StartListeningAsync(role, cts.Token);
+                
+                await AcceptClientsAsync(cts.Token);
             }
             finally
             {
                 cts.Cancel();
-                listener.Stop();
+                await _transportManager.StopListeningAsync();
             }
         }
-        private async Task AcceptClientsAsync(TcpListener listener, CancellationToken ct)
+        private async Task AcceptClientsAsync(CancellationToken ct)
         {
             while (!ct.IsCancellationRequested)
             {
                 CheckClients(ct);
-                var client = await listener.AcceptTcpClientAsync()
-                    .ConfigureAwait(false);
-                var connection = _factory.Create(client, Guid.NewGuid().ToString(), this);
+                var tConnection = await _transportManager.AcceptClientAsync().ConfigureAwait(false);
+                var connection = _factory.Create(Guid.NewGuid().ToString(), tConnection, this);
                 _connections.TryAdd(connection.ClientId, connection);
 
                 //once again, just fire and forget, and use the CancellationToken
@@ -62,8 +59,8 @@ namespace ReWork.Connectivity
         {
 
             var cts = new CancellationTokenSource();
-            var client = new TcpClient(role.Host, role.Port);
-            var connection = _factory.Create(client, Guid.Empty.ToString(), this);
+            var tConnection = await _transportManager.ConnectAsync(role, cts.Token);
+            var connection = _factory.Create(Guid.Empty.ToString(),tConnection, this);
 
             //once again, just fire and forget, and use the CancellationToken
             //to signal to the "forgotten" async invocation.

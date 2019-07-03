@@ -1,8 +1,8 @@
 ﻿using ReWork.SystemMessages.Transport;
 
-namespace ReWork.Bson
+namespace Rework.Transport.Tcp.Bson
 {
-    internal interface ICommandConverter
+    public interface ICommandConverter
     {
         ITransportMessages Deserialize(byte[] data);
         byte[] Serialize(object obj);

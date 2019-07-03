@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ReWork.Protocol
+namespace Rework.Transport.Tcp.Protocol
 {
     internal enum MessageType
     {

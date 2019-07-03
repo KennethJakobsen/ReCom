@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ReWork.Connectivity.Delivery
+﻿namespace ReWork.Connectivity.Delivery
 {
     internal class DeliveryKeeper
     {

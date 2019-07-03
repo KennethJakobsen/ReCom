@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ReWork.Protocol
+namespace Rework.Transport.Tcp.Protocol
 {
     public interface IProtocol
     {

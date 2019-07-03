@@ -1,10 +1,8 @@
 ﻿using ReWork.Activation;
 using ReWork.Activation.LifeTime;
-using ReWork.Bson;
 using ReWork.Connectivity;
 using ReWork.Handlers;
 using ReWork.Handlers.BuiltIn;
-using ReWork.Protocol;
 using ReWork.SystemMessages;
 
 namespace ReWork.Config
@@ -27,8 +25,6 @@ namespace ReWork.Config
         {
             _activator.Register<IHandle<DisconnectMessage>, BuiltInDisconnectMessageHandler>();
             _activator.Register<IHandlerDispatcher, HandlerDispatcher>();
-            _activator.Register<ICommandConverter, BsonConverter>();
-            _activator.Register<IProtocol, ReWorkProtocol>();
             _activator.Register<IHandle<WelcomeMessage>, BuiltInWelcomeMessageHandler>();
             _activator.Register<IHandle<CompleteHandshakeMessage>, BuiltInCompleteHandshakeHandler>();
             _activator.Register<IHandle<InitiateHandshakeMessage>, BuiltInInitiateHandshakeHandler>();

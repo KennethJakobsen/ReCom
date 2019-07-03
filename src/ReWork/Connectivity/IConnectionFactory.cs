@@ -1,10 +1,7 @@
-﻿using System;
-using System.Net.Sockets;
-
-namespace ReWork.Connectivity
+﻿namespace ReWork.Connectivity
 {
     public interface IConnectionFactory
     {
-        Connection Create(TcpClient client, string clientId, INotifyTermination terminator);
+        Connection Create(string clientId, ITransportConnection connection, INotifyTermination terminator);
     }
 }

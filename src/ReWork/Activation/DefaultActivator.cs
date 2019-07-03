@@ -90,8 +90,6 @@ namespace ReWork.Activation
             for (var i = 0; i < ctorParamLength; i++)
                 instances[i] = GetInstance(ctorParams[i].ParameterType, new HashSet<Type>(registered));
 
-            registered = null;
-
             return firstCtor.Invoke(instances);
         }
 

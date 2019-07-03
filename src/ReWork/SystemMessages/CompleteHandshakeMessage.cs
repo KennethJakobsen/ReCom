@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ReWork.SystemMessages
+﻿namespace ReWork.SystemMessages
 {
     public class CompleteHandshakeMessage : IReWorkSystemMessage
     {

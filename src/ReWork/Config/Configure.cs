@@ -6,14 +6,10 @@ namespace ReWork.Config
     {
         public static ReWorkConfigurer With(IActivator activator)
         {
-            Bootstrapper bootstrapper;
-            if (activator == null)
-                bootstrapper = new Bootstrapper();
-            bootstrapper = new Bootstrapper(activator);
+            var bootstrapper = new Bootstrapper(activator);
 
             var strappedActivator = bootstrapper.RegisterServices();
-
-            return strappedActivator.GetInstance<ReWorkConfigurer>();
+            return new ReWorkConfigurer(strappedActivator);
         }
     }
 }

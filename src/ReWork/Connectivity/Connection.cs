@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using ReWork.Bson;
 using ReWork.Connectivity.Delivery;
 using ReWork.Handlers;
-using ReWork.Protocol;
 using ReWork.SystemMessages;
 using ReWork.SystemMessages.Transport;
 
@@ -15,22 +12,16 @@ namespace ReWork.Connectivity
 {
     public class Connection : IDisposable
     {
-
-        private readonly TcpClient _client;
-        private readonly IProtocol _protocol;
-        private readonly ICommandConverter _commandConverter;
+        private readonly ITransportConnection _transport;
         private readonly IHandlerDispatcher _dispatcher;
         private readonly Dictionary<Guid, DeliveryKeeper> _devliverables = new Dictionary<Guid, DeliveryKeeper>();
         private readonly INotifyTermination _connectionTerminator;
 
-        internal Connection(TcpClient client, string clientId, IProtocol protocol, ICommandConverter commandConverter, IHandlerDispatcher dispatcher, INotifyTermination connectionTerminator)
+        internal Connection(string clientId, ITransportConnection transport, IHandlerDispatcher dispatcher, INotifyTermination connectionTerminator)
         {
-            _client = client;
-            _protocol = protocol;
-            _commandConverter = commandConverter;
+            _transport = transport;
             _dispatcher = dispatcher;
             ClientId = clientId;
-            Stream = _client.GetStream();
             _connectionTerminator = connectionTerminator;
             AuthorizedForReceive = false;
         }
@@ -41,7 +32,6 @@ namespace ReWork.Connectivity
         }
         public string ClientId { get; private set; }
         public bool AuthorizedForReceive { get; protected set; }
-        internal NetworkStream Stream { get; }
 
         public virtual void Authorize()
         {
@@ -68,8 +58,7 @@ namespace ReWork.Connectivity
                 if (requireFeedback || requireHandled)
                     _devliverables.Add(transport.MessageId, new DeliveryKeeper(command, requireFeedback, requireHandled));
 
-                var commandBytes = _commandConverter.Serialize(transport);
-                await _protocol.WriteCommandToStream(commandBytes, Stream);
+                await _transport.WriteCommandAsync(transport);
             }
             catch (IOException)
             {
@@ -87,9 +76,7 @@ namespace ReWork.Connectivity
                     Payload = command,
                     
                 };
-
-                var commandBytes = _commandConverter.Serialize(transport);
-                await _protocol.WriteCommandToStream(commandBytes, Stream);
+                await _transport.WriteCommandAsync(transport);
             }
             catch (IOException)
             {
@@ -99,7 +86,7 @@ namespace ReWork.Connectivity
 
         public bool IsConnected()
         {
-            return _client.Connected; //Client.Poll(100, SelectMode.SelectRead);
+            return _transport.IsConnectedAsync().Result;
         }
         internal void UpdateId(string id)
         {
@@ -107,7 +94,7 @@ namespace ReWork.Connectivity
         }
         public void Dispose()
         {
-            _client.Dispose();
+            _transport.Dispose();
         }
 
         internal async Task ProcessCommandsAsync(CancellationToken ct)
@@ -116,21 +103,7 @@ namespace ReWork.Connectivity
             {
                 try
                 {
-                    var timeoutTask = Task.Delay(TimeSpan.FromHours(2), ct);
-                    var readTask = _protocol.ReadCommandFromStream(Stream, ct);
-                    var completedTask = await Task.WhenAny(timeoutTask, readTask)
-                        .ConfigureAwait(false);
-                    ITransportMessages command;
-                    if (completedTask == timeoutTask)
-                    {
-                        command = new CommandTransportMessage() { Payload = new TimeoutMessage("Connection timed out")};
-                        break;
-                    }
-
-                    //now we know that the amountTask is complete so
-                    //we can ask for its Result without blocking
-                    var commandBytes = readTask.Result;
-                    command = _commandConverter.Deserialize(commandBytes);
+                    var command = await _transport.ReadCommandAsync(ct);
 
                     if (command != null)
                     {
@@ -159,7 +132,7 @@ namespace ReWork.Connectivity
         public async Task Terminate(string reason = null)
         {
             await Send(new ConnectionTerminatingMessage(reason));
-            _client.Close();
+            await _transport.DisconnectAsync();
             _connectionTerminator.Terminate(ClientId);
             Dispose();
         }
@@ -201,10 +174,5 @@ namespace ReWork.Connectivity
         }
 
 
-    }
-
-    public interface INotifyTermination
-    {
-        void Terminate(string connectionName);
     }
 }

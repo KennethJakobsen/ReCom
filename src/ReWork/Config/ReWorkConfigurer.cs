@@ -1,24 +1,41 @@
-﻿using ReWork.Config.Roles;
+﻿using System;
+using ReWork.Activation;
+using ReWork.Config.Roles;
 using ReWork.Connectivity;
 
 namespace ReWork.Config
 {
     public class ReWorkConfigurer
     {
-        private readonly IConnectionManager _connectionManager;
+        private IActivator _activator;
 
-        public ReWorkConfigurer(IConnectionManager connectionManager)
+        public ReWorkConfigurer(IActivator activator)
         {
-            _connectionManager = connectionManager;
+            _activator = activator;
+        }
+
+        internal void SetActivator(IActivator activator)
+        {
+            _activator = activator;
+        }
+        public ReWorkConfigurer Transport(Action<IActivator> transport)
+        {
+            transport(_activator);
+            return this;
         }
         public void Start(ReWorkServerRole role)
         {
-            _connectionManager.StartListening(role).Wait();
+            Start().StartListening(role).Wait();
         }
 
         public Connection Start(ReWorkClientRole role)
         {
-            return _connectionManager.Connect(role).ConfigureAwait(false).GetAwaiter().GetResult();
+            return Start().Connect(role).ConfigureAwait(false).GetAwaiter().GetResult();
+        }
+
+        private IConnectionManager Start()
+        {
+            return _activator.GetInstance<IConnectionManager>();
         }
     }
 }

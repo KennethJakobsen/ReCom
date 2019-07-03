@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Threading;
+using Rework.Transport.Tcp.Extensions;
 using ReWork.Activation;
 using ReWork.Config;
 using ReWork.Config.Roles;
@@ -30,6 +31,7 @@ namespace ReWork.Test.Application.Client
                 activator.Register<ICommand<HandledMessage>, MessageHandledCommandHandler>();
                 var connection = Configure
                     .With(activator)
+                    .Transport(t => t.UseTcpTransport())
                     .Start(new ReWorkClientRole("127.0.0.1", 13000));
 
                 while (true)

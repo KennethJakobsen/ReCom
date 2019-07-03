@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Rework.Transport.Tcp\Rework.Transport.Tcp.csproj" />
     <ProjectReference Include="..\..\src\ReWork\ReWork.csproj" />
     <ProjectReference Include="..\ReWork.Test.Common.Domain\ReWork.Test.Common.Domain.csproj" />
   </ItemGroup>

@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Rework.Transport.Tcp.Extensions;
 using ReWork.Activation;
 using ReWork.Config;
 using ReWork.Config.Roles;
@@ -16,7 +17,9 @@ namespace ReWork.Test.Application.Server
             var activator = new DefaultActivator();
             activator.Register<ICommand<PingPongCommand>, PingPongCommandHandler>();
             activator.Register<ICommand<InitiateHandshakeMessage>, InitiateHandshakeMessageHandler>();
-            Configure.With(activator).Start(new ReWorkServerRole(IPAddress.Any, 13000));
+            Configure.With(activator)
+                .Transport(t => t.UseTcpTransport())
+                .Start(new ReWorkServerRole(IPAddress.Any, 13000));
         }
     }
 }

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
 using ReWork.SystemMessages.Transport;
 
-namespace ReWork.Bson
+namespace Rework.Transport.Tcp.Bson
 {
     internal class BsonConverter : ICommandConverter
     {
