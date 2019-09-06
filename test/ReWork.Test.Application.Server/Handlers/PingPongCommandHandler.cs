@@ -13,6 +13,7 @@ namespace ReWork.Test.Application.Server.Handlers
         {
             Console.WriteLine($"client with id {connection.ClientId} says: {command.Message}");
             await connection.Send(new PingPongCommand() {Message = "Pong!"});
+            
         }
     }
 }

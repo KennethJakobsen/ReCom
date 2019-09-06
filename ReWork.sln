@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2015
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReWork", "src\ReWork\ReWork.csproj", "{62164ED5-4C2C-4BD6-9AD1-E0BF241A51D3}"
 EndProject
@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReWork.Test.Common.Domain",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReWork.Tests.Unit", "test\Rework.Tests.Unit\ReWork.Tests.Unit.csproj", "{2552C7E7-843B-4B1E-88EA-00123F51BF81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rework.Transport.Tcp", "Rework.Transport.Tcp\Rework.Transport.Tcp.csproj", "{91ABF295-64C7-458B-9258-B638E3637C10}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rework.Transport.Tcp", "Rework.Transport.Tcp\Rework.Transport.Tcp.csproj", "{91ABF295-64C7-458B-9258-B638E3637C10}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rework.Transport.WebSockets", "Rework.Transport.WebSockets\Rework.Transport.WebSockets.csproj", "{8354611C-8AD4-46EE-9E74-E87570D981C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{91ABF295-64C7-458B-9258-B638E3637C10}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91ABF295-64C7-458B-9258-B638E3637C10}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91ABF295-64C7-458B-9258-B638E3637C10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8354611C-8AD4-46EE-9E74-E87570D981C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8354611C-8AD4-46EE-9E74-E87570D981C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8354611C-8AD4-46EE-9E74-E87570D981C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8354611C-8AD4-46EE-9E74-E87570D981C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

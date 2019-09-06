@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Rework.Transport.Tcp.Bson;
+using Rework.Transport.Tcp.Configuration;
 using Rework.Transport.Tcp.Protocol;
 using ReWork.Connectivity;
 using ReWork.SystemMessages;
@@ -20,10 +23,11 @@ namespace Rework.Transport.Tcp.Transport
         private readonly IProtocol _protocol;
         private readonly NetworkStream _stream;
 
-        public ReworkTcpTransport(TcpClient client, ICommandConverter commandConverter, IProtocol protocol)
+        public ReworkTcpTransport(TcpClient client, ICommandConverter commandConverter, IProtocol protocol, Stream stream)
         {
             _client = client;
-            _stream = _client.GetStream();
+            _client.NoDelay = true;
+            _stream = client.GetStream();
             _commandConverter = commandConverter;
             _protocol = protocol;
         }
@@ -34,6 +38,7 @@ namespace Rework.Transport.Tcp.Transport
 
         public async Task<ITransportMessages> ReadCommandAsync(CancellationToken ct)
         {
+            
             var timeoutTask = Task.Delay(TimeSpan.FromHours(2), ct);
             var readTask = _protocol.ReadCommandFromStream(_stream, ct);
             var completedTask = await Task.WhenAny(timeoutTask, readTask)
@@ -65,5 +70,7 @@ namespace Rework.Transport.Tcp.Transport
             _client.Dispose();
             return Task.CompletedTask;
         }
+
+  
     }
 }

@@ -11,7 +11,7 @@ namespace Rework.Transport.Tcp.Protocol
         BigData = 2,
         SystemOnly = 3
     }
-    internal class ReWorkProtocol : IProtocol
+    internal class ReWorkTcpProtocol : IProtocol
     {
         public async Task<byte[]> ReadCommandFromStream(Stream stream, CancellationToken ct)
         {

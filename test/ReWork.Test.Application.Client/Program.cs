@@ -31,15 +31,18 @@ namespace ReWork.Test.Application.Client
                 activator.Register<ICommand<HandledMessage>, MessageHandledCommandHandler>();
                 var connection = Configure
                     .With(activator)
-                    .Transport(t => t.UseTcpTransport())
+                    .Transport(t => t
+                        .UseTcpTransport())
                     .Start(new ReWorkClientRole("127.0.0.1", 13000));
 
-                while (true)
+                for(int i = 1; i <= 100000; i++)
                 {
-                    connection.Send(new PingPongCommand() { Message = "Ping!" }, true, true).Wait();
-                    Console.ReadLine();
+                    connection.Send(new PingPongCommand() { Message = "Message " + i }, true, true).Wait();
+                    Console.WriteLine(i);
+                    Thread.Sleep(200);
                 }
                 
+
 
             }
             catch (ArgumentNullException e)
@@ -52,7 +55,7 @@ namespace ReWork.Test.Application.Client
             }
 
             Console.WriteLine("\n Press Enter to continue...");
-            Console.Read();
+            //Console.Read();
         }
     }
 }
