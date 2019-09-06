@@ -12,14 +12,14 @@ using ReWork.SystemMessages;
 
 namespace ReWork.Connectivity
 {
-    internal class ConnectionManager : IConnectionManager, INotifyTermination
+    internal class ServerConnectionManager : IServerConnectionManager, INotifyTermination
     {
         private readonly ConcurrentDictionary<string, Connection> _connections = new ConcurrentDictionary<string, Connection>();
         private readonly IConnectionFactory _factory;
         private readonly IHandlerDispatcher _dispatcher;
-        private readonly ITransportManager _transportManager;
+        private readonly IServerTransportManager _transportManager;
 
-        public ConnectionManager(IConnectionFactory factory, IHandlerDispatcher dispatcher, ITransportManager transportManager)
+        public ServerConnectionManager(IConnectionFactory factory, IHandlerDispatcher dispatcher, IServerTransportManager transportManager)
         {
             _factory = factory;
             _dispatcher = dispatcher;
@@ -44,7 +44,7 @@ namespace ReWork.Connectivity
         {
             while (!ct.IsCancellationRequested)
             {
-                CheckClients(ct);
+                CheckClients();
                 var tConnection = await _transportManager.AcceptClientAsync().ConfigureAwait(false);
                 var connection = _factory.Create(Guid.NewGuid().ToString(), tConnection, this);
                 _connections.TryAdd(connection.ClientId, connection);
@@ -55,29 +55,11 @@ namespace ReWork.Connectivity
             }
 
         }
-        public async Task<Connection> Connect(ReWorkClientRole role)
+       
+
+        private async Task CheckClients()
         {
-
-            var cts = new CancellationTokenSource();
-            var tConnection = await _transportManager.ConnectAsync(role, cts.Token);
-            var connection = _factory.Create(Guid.Empty.ToString(),tConnection, this);
-
-            //once again, just fire and forget, and use the CancellationToken
-            //to signal to the "forgotten" async invocation.
-            connection.Authorize();
-            connection.ProcessCommandsAsync(cts.Token);
-            await connection.Send(new InitiateHandshakeMessage());
-            return connection;
-        }
-
-        public IEnumerable<Connection> GetConnections(IEnumerable<string> ids)
-        {
-            return ids.Where(_connections.ContainsKey).Select(x => _connections[x]);
-        }
-
-        private async Task CheckClients(CancellationToken ct)
-        {
-            while (!ct.IsCancellationRequested)
+            while (true)
             {
                 Connection key = null;
                 foreach (var connection in _connections)
@@ -93,7 +75,7 @@ namespace ReWork.Connectivity
                         await _dispatcher.Execute(new DisconnectMessage(), conn);
                 }
 
-                await Task.Delay(200, ct);
+                Thread.Sleep(5);
             }
         }
         public void Terminate(string connectionName)

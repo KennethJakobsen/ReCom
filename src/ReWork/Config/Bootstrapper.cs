@@ -33,7 +33,8 @@ namespace ReWork.Config
             _activator.Register<IHandle<HandledMessage>, BuiltInHandledMessageHandler>();
             _activator.Register<IHandle<NotAuthorizedMessage>, BuiltinNotAuthorizedMessageHandler>();
             _activator.Register<IConnectionFactory, ConnectionFactory>(new ActivatorLifeTime());
-            _activator.Register<IConnectionManager, ConnectionManager>(new ActivatorLifeTime());
+            _activator.Register<IClientConnectionManager, ClientConnectionManager>(new ActivatorLifeTime());
+            _activator.Register<IServerConnectionManager, ServerConnectionManager>(new ActivatorLifeTime());
             _activator.Register<ReWorkConfigurer>();
             _activator.Register<IActivator>(_activator);
             return _activator;

@@ -17,7 +17,7 @@ namespace ReWork.Connectivity
         private readonly Dictionary<Guid, DeliveryKeeper> _devliverables = new Dictionary<Guid, DeliveryKeeper>();
         private readonly INotifyTermination _connectionTerminator;
 
-        internal Connection(string clientId, ITransportConnection transport, IHandlerDispatcher dispatcher, INotifyTermination connectionTerminator)
+        internal Connection(string clientId, ITransportConnection transport, IHandlerDispatcher dispatcher, INotifyTermination connectionTerminator = null)
         {
             _transport = transport;
             _dispatcher = dispatcher;
@@ -71,7 +71,7 @@ namespace ReWork.Connectivity
         {
             try
             {
-                var transport = new CommandTransportMessage()
+                var transport = new RequestTransportMessage()
                 {
                     Payload = command,
                     
@@ -133,7 +133,7 @@ namespace ReWork.Connectivity
         {
             await Send(new ConnectionTerminatingMessage(reason));
             await _transport.DisconnectAsync();
-            _connectionTerminator.Terminate(ClientId);
+            _connectionTerminator?.Terminate(ClientId);
             Dispose();
         }
 

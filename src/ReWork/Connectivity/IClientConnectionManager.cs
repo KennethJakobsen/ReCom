@@ -3,9 +3,8 @@ using ReWork.Config.Roles;
 
 namespace ReWork.Connectivity
 {
-    public interface IConnectionManager
+    public interface IClientConnectionManager
     {
-        Task StartListening(ReWorkServerRole role);
         Task<Connection> Connect(ReWorkClientRole role);
     }
 }

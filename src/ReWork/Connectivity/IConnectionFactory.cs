@@ -2,6 +2,6 @@
 {
     public interface IConnectionFactory
     {
-        Connection Create(string clientId, ITransportConnection connection, INotifyTermination terminator);
+        Connection Create(string clientId, ITransportConnection connection, INotifyTermination terminator = null);
     }
 }

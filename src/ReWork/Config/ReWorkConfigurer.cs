@@ -25,17 +25,21 @@ namespace ReWork.Config
         }
         public void Start(ReWorkServerRole role)
         {
-            Start().StartListening(role).Wait();
+            StartServer().StartListening(role).Wait();
         }
 
         public Connection Start(ReWorkClientRole role)
         {
-            return Start().Connect(role).ConfigureAwait(false).GetAwaiter().GetResult();
+            return StartClient().Connect(role).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
-        private IConnectionManager Start()
+        private IClientConnectionManager StartClient()
         {
-            return _activator.GetInstance<IConnectionManager>();
+            return _activator.GetInstance<IClientConnectionManager>();
+        }
+        private IServerConnectionManager StartServer()
+        {
+            return _activator.GetInstance<IServerConnectionManager>();
         }
     }
 }
