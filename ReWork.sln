@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReWork.Test.Common.Domain",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReWork.Tests.Unit", "test\Rework.Tests.Unit\ReWork.Tests.Unit.csproj", "{2552C7E7-843B-4B1E-88EA-00123F51BF81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rework.Transport.Tcp", "Rework.Transport.Tcp\Rework.Transport.Tcp.csproj", "{91ABF295-64C7-458B-9258-B638E3637C10}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rework.Transport.Tcp", "src\Rework.Transport.Tcp\Rework.Transport.Tcp.csproj", "{91ABF295-64C7-458B-9258-B638E3637C10}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
