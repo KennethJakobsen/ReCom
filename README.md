@@ -1,6 +1,6 @@
-# ReWork
+# ReCom
 A Reactive Networking library that makes the messaging through TCP easy
-ReWork is currently in a very early devlopment stage with very limited functionality.
+ReCom is currently in a very early devlopment stage with very limited functionality.
 
 ## Getting started
 Getting started is easy, we just need to configure 3 things:
@@ -21,7 +21,7 @@ public class PingPongCommand
 In the server we need to configure a couple of things:
 - A command handler
 - IoC Container (activator)
-- ReWork it self
+- ReCom it self
 
 #### Command Handler
 In the handler below we implement `ICommand<>` and send the same message back to the client.
@@ -38,7 +38,7 @@ public class PingPongCommandHandler : ICommand<PingPongCommand>
 ```
 
 #### IoC Container
-In order to not have to many dependencies ReWork has a custom IoC container, this is called the DefaultActivator it does the most basic this that a other container does as well.
+In order to not have to many dependencies ReCom has a custom IoC container, this is called the DefaultActivator it does the most basic this that a other container does as well.
 
 - Constructor Injection
 - Circular dependency detection.
@@ -54,11 +54,11 @@ Create a new container and register the handler, if the handler has any dependen
   var activator = new DefaultActivator();
   activator.Register<ICommand<PingPongCommand>, PingPongCommandHandler>();
 ```
-#### ReWork
+#### ReCom
 This is the easiest part you just `Configure.With()` the activator an start with the server role
 
 ```
-Configure.With(activator).Start(new ReWorkServerRole(IPAddress.Any, 13000));
+Configure.With(activator).Start(new ReComServerRole(IPAddress.Any, 13000));
 ```
 
 ### Client 
@@ -76,7 +76,7 @@ public class PingPongCommandHandler : ICommand<PingPongCommand>
     }
 }
 ```
-#### ReWork Client Setup
+#### ReCom Client Setup
 The start with client role will this time return a connection that can be used to send messages to the server.
 
 ```
@@ -84,7 +84,7 @@ var activator = new DefaultActivator();
 activator.Register<ICommand<PingPongCommand>, PingPongCommandHandler>();
 var connection = Configure
     .With(activator)
-    .Start(new ReWorkClientRole("127.0.0.1", 13000));
+    .Start(new ReComClientRole("127.0.0.1", 13000));
 
 while (true)
 {
