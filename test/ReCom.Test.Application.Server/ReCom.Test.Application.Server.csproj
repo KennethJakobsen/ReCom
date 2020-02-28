@@ -6,10 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\src\ReCom.Transport.Tcp\ReCom.Transport.Tcp.csproj" />
     <ProjectReference Include="..\..\src\ReCom\ReCom.csproj" />
     <ProjectReference Include="..\ReCom.Test.Common.Domain\ReCom.Test.Common.Domain.csproj" />

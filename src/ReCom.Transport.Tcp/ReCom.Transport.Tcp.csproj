@@ -6,6 +6,13 @@
     <PackageVersion>0.1.0-alpha</PackageVersion>
     <Authors>Kenneth Jakobsen</Authors>
     <Description>TCP Transport for ReWork</Description>
+    <Title>ReWork TCP Transport</Title>
+    <Copyright>Kenneth Jakobsen</Copyright>
+    <PackageProjectUrl>https://github.com/KennethJakobsen/Rehttps://github.com/KennethJakobsen/ReCom</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/KennethJakobsen/ReCom/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/KennethJakobsen/ReCom/blob/master/LICENSE</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>ReWork, TCP, Network, Communication</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,5 +21,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ReCom\ReCom.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
   </ItemGroup>
 </Project>

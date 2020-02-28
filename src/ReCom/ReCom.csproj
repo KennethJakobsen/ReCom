@@ -7,11 +7,14 @@
     <PackOnBuild>true</PackOnBuild>
     <PackageVersion>0.1.0-alpha</PackageVersion>
     <Authors>Kenneth Jakobsen</Authors>
+    <Title>ReCom - Networking made easy.</Title>
+    <Copyright>Kenneth Jakobsen</Copyright>
+    <PackageProjectUrl>https://github.com/KennethJakobsen/ReCom.git</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/KennethJakobsen/ReCom/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/KennethJakobsen/ReCom.git</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>Network, TCP, Handler</PackageTags>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.1" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Remove="Rework.nuspec" />
