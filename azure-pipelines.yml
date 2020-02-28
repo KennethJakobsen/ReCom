@@ -34,12 +34,11 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-- task: VSBuild@1
+- task: NuGetCommand@2
   inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/t:pack'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: 'pack'
+    packagesToPack: '**/*.nuspec'
+    versioningScheme: 'off'
 
 - task: NuGetCommand@2
   inputs:
