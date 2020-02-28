@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+        <id>ReCom/id>
+        <version>0.1.0-alpha</version>
+        <authors>Kenneth Jakobsen</authors>
+        <owners>Kenneth Jakobsen</owners>
+        <license type="file">LICENSE</license>
+        <projectUrl>https://github.com/KennethJakobsen/ReCom</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Networking made easy with handlers</description>
+        <tags>tcp network recom handler</tags>
+    </metadata>
+    <files>
+        <file src="bin\Release\netstandard2.0\ReCom.dll" target="lib" />
+        <file src="..\..\LICENSE" target="" />
+    </files>
+</package>

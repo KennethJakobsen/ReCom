@@ -2,17 +2,18 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <PackageId>ReWork.Transport.Tcp</PackageId>
+    <PackageId>ReCom.Transport.Tcp</PackageId>
     <PackageVersion>0.1.0-alpha</PackageVersion>
     <Authors>Kenneth Jakobsen</Authors>
-    <Description>TCP Transport for ReWork</Description>
-    <Title>ReWork TCP Transport</Title>
+    <Description>TCP Transport for ReCom</Description>
+    <Title>ReCom TCP Transport</Title>
     <Copyright>Kenneth Jakobsen</Copyright>
     <PackageProjectUrl>https://github.com/KennethJakobsen/Rehttps://github.com/KennethJakobsen/ReCom</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/KennethJakobsen/ReCom/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/KennethJakobsen/ReCom/blob/master/LICENSE</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>ReWork, TCP, Network, Communication</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,10 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ReCom\ReCom.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
+    <PackageReference Include="ReCom" Version="0.1.0-alpha" />
   </ItemGroup>
 </Project>
